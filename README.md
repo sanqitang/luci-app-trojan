@@ -65,4 +65,4 @@ trojan-go://79225126-b565-3e5d-a576-1b8f0425e5fd@abc.xxx.com:443/?sni=abc.xxx.co
 * [Trojan-Go](https://github.com/p4gefau1t/trojan-go) by [p4gefau1t](https://github.com/p4gefau1t)
 
 ## License  
-Luci App For Trojan-Go OpenWrt is released under the GPL v3.0 License - see detailed [LICENSE](https://github.com/frainzy1477/luci-app-trojan/blob/master/LICENSE) .
+Luci App For Trojan-Go OpenWrt is released under the GPL v3.0 License - see the detailed [LICENSE](https://github.com/frainzy1477/luci-app-trojan/blob/master/LICENSE) .
