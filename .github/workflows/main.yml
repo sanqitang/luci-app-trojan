@@ -1,18 +1,36 @@
-on: 
-  release:
-    types:
-      - created
+#on: 
+#  release:
+#    types:
+#      - created
+on:
+  repository_dispatch:
+    types: [trojan,sshtrojan]
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'trojan'
+        required: false
+        default: 'false'
+
+
 
 name: luci-app-trojan
 jobs:
   build:
     runs-on: ubuntu-20.04
     env:
-      URL: https://downloads.openwrt.org/releases/19.07.3/targets/x86/64/openwrt-sdk-19.07.3-x86-64_gcc-7.5.0_musl.Linux-x86_64.tar.xz
+      URL: https://downloads.openwrt.org/releases/19.07.3/targets/ar71xx/nand/openwrt-sdk-19.07.3-ar71xx-nand_gcc-7.5.0_musl.Linux-x86_64.tar.xz
       REPF: ${{ github.repository }}
       PKGN: ${{ 'luci-app-trojan' }}
+      FILE_NAME: luci-app-trojan
+      UPLOAD_RELEASE: true
 
     steps:
+
+    - name: TG notification #TG推送
+      run: curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=${{ env.FILE_NAME }}Start compiling"
+
+
     - name: Checkout - ${{ github.ref }}
       uses: actions/checkout@v1
      
@@ -59,6 +77,14 @@ jobs:
         [ -e "package/${REP}/${CONFIG_FILE}" ] && mv "${CONFIG}" .config
         make defconfig
 
+    - name: SSH connection to Actions
+      uses: P3TERX/ssh2actions@v1.0.0
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'sshtrojan')
+      env:
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+
     - name: Build target
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -76,4 +102,8 @@ jobs:
           files: ../bin/*.ipk
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+    
+
+    - name: TG notification #TG推送
+    #  if: steps.organize.outputs.status == 'success' && !cancelled()
+      run: curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=${{ env.FILE_NAME }}release published - compiling completed\n${{ env.useVersionInfo }}"    
