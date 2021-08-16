@@ -19,8 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     env:
-      URL: https://downloads.openwrt.org/releases/19.07.3/targets/ar71xx/nand/openwrt-sdk-19.07.3-ar71xx-nand_gcc-7.5.0_musl.Linux-x86_64.tar.xz
-      REPF: ${{ github.repository }}
+      URL: https://archive.openwrt.org/releases/19.07.3/targets/kirkwood/generic/openwrt-sdk-19.07.3-kirkwood_gcc-7.5.0_musl_eabi.Linux-x86_64.tar.xz      REPF: ${{ github.repository }}
       PKGN: ${{ 'luci-app-trojan' }}
       FILE_NAME: luci-app-trojan
       UPLOAD_RELEASE: true
